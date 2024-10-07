@@ -133,8 +133,8 @@ bool enqueue(uint8_t* in, int sample, uint32_t resolution){
             int16_t *d = (int16_t*)in;
             sample /= 2;
             for (i = 0; i < sample / 2; i++){
-                i2s_buf[enqueue_pos][j++] = *d++ << 16;
-                i2s_buf[enqueue_pos][j++] = *d++ << 16;
+                i2s_buf[enqueue_pos][j++] = volume_set(*d++ << 16, mul_l);
+                i2s_buf[enqueue_pos][j++] = volume_set(*d++ << 16, mul_r);
             }
             i2s_sample[enqueue_pos] = sample;
         }
@@ -147,12 +147,12 @@ bool enqueue(uint8_t* in, int sample, uint32_t resolution){
                 e |= *d++ << 8;
                 e |= *d++ << 16;
                 e |= *d++ << 24;
-                i2s_buf[enqueue_pos][j++] = e;
+                i2s_buf[enqueue_pos][j++] = volume_set(e, mul_l);
                 e = 0;
                 e |= *d++ << 8;
                 e |= *d++ << 16;
                 e |= *d++ << 24;
-                i2s_buf[enqueue_pos][j++] = e;
+                i2s_buf[enqueue_pos][j++] = volume_set(e, mul_r);
             }
             i2s_sample[enqueue_pos] = sample;
         }
@@ -160,8 +160,8 @@ bool enqueue(uint8_t* in, int sample, uint32_t resolution){
             int32_t *d = (int32_t*)in;
             sample /= 4;
             for (i = 0; i < sample / 2; i++){
-                i2s_buf[enqueue_pos][j++] = *d++;
-                i2s_buf[enqueue_pos][j++] = *d++;
+                i2s_buf[enqueue_pos][j++] = volume_set(*d++, mul_l);
+                i2s_buf[enqueue_pos][j++] = volume_set(*d++, mul_r);
             }
             i2s_sample[enqueue_pos] = sample;
         }
