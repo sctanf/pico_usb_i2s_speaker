@@ -61,8 +61,7 @@ target_include_directories(pico_usb_i2s_speaker PRIVATE
 )
 
 # Add any user requested libraries
-target_link_libraries(pico_usb_i2s_speaker 
-        hardware_i2c
+target_link_libraries(pico_usb_i2s_speaker
         hardware_dma
         hardware_pio
         hardware_clocks

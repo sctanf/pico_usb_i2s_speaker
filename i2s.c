@@ -125,7 +125,7 @@ void i2s_mclk_dma_init(void){
 
 
 //i2sのバッファにusb受信データを積む
-bool enqueue(uint8_t* in, int sample, uint32_t resolution){
+bool enqueue(uint8_t* in, int sample, uint8_t resolution){
     int i, j;
 	if (i2s_buf_length < BUF_DEPTH){
         j = 0;

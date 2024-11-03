@@ -14,7 +14,7 @@ void i2s_mclk_init(uint32_t audio_clock);
 void i2s_mclk_change_clock(uint32_t audio_clock);
 void i2s_mclk_clock_set(uint32_t audio_clock);
 void i2s_mclk_dma_init(void);
-bool enqueue(uint8_t* in, int sample, uint32_t resolution);
+bool enqueue(uint8_t* in, int sample, uint8_t resolution);
 void i2s_handler(void);
 bool dequeue(int32_t** buff, int* sample);
 int8_t get_buf_length(void);
