@@ -429,9 +429,9 @@ void audio_task(void)
       uint32_t min_feedback = (current_sample_rate / 1000 - 1) << 16;
       uint32_t max_feedback = (current_sample_rate / 1000 + 1) << 16;
 
-      //i2sバッファの堆積量がBUF_DEPTH/2より多いか少ないかでフィードバック値を決定する
-      if (length < BUF_DEPTH / 2) feedback = max_feedback;
-      else if (length > BUF_DEPTH / 2) feedback = min_feedback;
+      //i2sバッファの堆積量がI2S_TARGET_LEVELより多いか少ないかでフィードバック値を決定する
+      if (length < I2S_TARGET_LEVEL) feedback = max_feedback;
+      else if (length > I2S_TARGET_LEVEL) feedback = min_feedback;
 
       tud_audio_fb_set(feedback);
       start_ms = curr_ms;

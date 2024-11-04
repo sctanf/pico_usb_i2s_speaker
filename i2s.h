@@ -1,8 +1,9 @@
 #ifndef I2S_H
 #define I2S_H
 
-#define BUF_DEPTH   20
-#define I2S_START_LEVEL 5
+#define BUF_DEPTH   16
+#define I2S_START_LEVEL     BUF_DEPTH / 4
+#define I2S_TARGET_LEVEL    BUF_DEPTH / 2
 
 #define PIO_I2S         pio0
 #define PIO_I2S_SM      0

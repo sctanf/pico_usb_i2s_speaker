@@ -179,7 +179,7 @@ bool enqueue(uint8_t* in, int sample, uint8_t resolution){
 
 void __isr __time_critical_func(i2s_handler)(){
 	static bool mute;
-	static int32_t mute_buff[1000*2] = {0};
+	static int32_t mute_buff[96 * 2] = {0};
 	static uint32_t mute_len = sizeof(mute_buff) / sizeof(int32_t);
 	
 	if (i2s_buf_length == 0){
