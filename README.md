@@ -3,7 +3,7 @@ Raspberry Pi Picoとtinyusbを使ったマスタークロック付きのi2sを�
 
 # build
 vscodeの拡張機能(Raspberry Pi Pico)でインポートし、ビルドしてください。
-pico-sdkは2.0.0を使っています。
+pico-sdkは2.1.0を使っています。
 
 # i2sのピン
 |name|pin|
