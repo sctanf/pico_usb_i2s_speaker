@@ -14,7 +14,7 @@ static int8_t i2s_buf_length;
 static uint8_t enqueue_pos;
 static uint8_t dequeue_pos;
 
-static int32_t i2s_buf[BUF_DEPTH][CFG_TUD_AUDIO_FUNC_1_EP_OUT_SW_BUF_SZ / 3];
+static int32_t i2s_buf[BUF_DEPTH][CFG_TUD_AUDIO_FUNC_1_EP_OUT_SW_BUF_SZ / 4];
 static uint32_t i2s_sample[BUF_DEPTH];
 
 static int32_t mul_l;
@@ -127,16 +127,17 @@ void i2s_mclk_dma_init(void){
 //i2sのバッファにusb受信データを積む
 bool enqueue(uint8_t* in, int sample, uint8_t resolution){
     int i, j;
+    int32_t lch_buf[CFG_TUD_AUDIO_FUNC_1_EP_OUT_SW_BUF_SZ / 8];
+    int32_t rch_buf[CFG_TUD_AUDIO_FUNC_1_EP_OUT_SW_BUF_SZ / 8];
+
 	if (i2s_buf_length < BUF_DEPTH){
-        j = 0;
         if (resolution == 16){
             int16_t *d = (int16_t*)in;
             sample /= 2;
             for (i = 0; i < sample / 2; i++){
-                i2s_buf[enqueue_pos][j++] = volume_set(*d++ << 16, mul_l);
-                i2s_buf[enqueue_pos][j++] = volume_set(*d++ << 16, mul_r);
+                lch_buf[i] = *d++ << 16;
+                rch_buf[i] = *d++ << 16;
             }
-            i2s_sample[enqueue_pos] = sample;
         }
         else if (resolution == 24){
             uint8_t *d = in;
@@ -147,25 +148,37 @@ bool enqueue(uint8_t* in, int sample, uint8_t resolution){
                 e |= *d++ << 8;
                 e |= *d++ << 16;
                 e |= *d++ << 24;
-                i2s_buf[enqueue_pos][j++] = volume_set(e, mul_l);
+                lch_buf[i] = e;
                 e = 0;
                 e |= *d++ << 8;
                 e |= *d++ << 16;
                 e |= *d++ << 24;
-                i2s_buf[enqueue_pos][j++] = volume_set(e, mul_r);
+                rch_buf[i] = e;
             }
-            i2s_sample[enqueue_pos] = sample;
         }
         else if (resolution == 32){
             int32_t *d = (int32_t*)in;
             sample /= 4;
             for (i = 0; i < sample / 2; i++){
-                i2s_buf[enqueue_pos][j++] = volume_set(*d++, mul_l);
-                i2s_buf[enqueue_pos][j++] = volume_set(*d++, mul_r);
+                lch_buf[i] = *d++;
+                rch_buf[i] = *d++;
             }
-            i2s_sample[enqueue_pos] = sample;
         }
-		
+
+        //音量処理
+        for (i = 0; i < sample / 2; i++){
+            lch_buf[i] = volume_set(lch_buf[i], mul_l);
+            rch_buf[i] = volume_set(rch_buf[i], mul_r);
+        }
+
+        //i2sバッファに格納
+        j = 0;
+        for (i = 0; i < sample / 2; i++){
+            i2s_buf[enqueue_pos][j++] = lch_buf[i];
+            i2s_buf[enqueue_pos][j++] = rch_buf[i];
+        }
+        i2s_sample[enqueue_pos] = sample;
+
 		enqueue_pos++;
 		if (enqueue_pos >= BUF_DEPTH) enqueue_pos = 0;
 
