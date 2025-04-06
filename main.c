@@ -2,6 +2,7 @@
  * The MIT License (MIT)
  *
  * Copyright (c) 2020 Jerzy Kasenberg
+ * Copyright (c) 2025 BambooMaster
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,6 +22,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
+ */
+
+/**
+ * @file main.c
+ * @author BambooMaster (https://misskey.hakoniwa-project.com/@BambooMaster)
+ * @brief pico_usb_i2s_speaker
+ * @version 0.6
+ * @date 2025-04-06
+ * 
  */
 
 #include <stdio.h>
