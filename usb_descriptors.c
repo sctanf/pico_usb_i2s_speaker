@@ -29,7 +29,7 @@
  * @file usb_descriptors.c
  * @author BambooMaster (https://misskey.hakoniwa-project.com/@BambooMaster)
  * @brief pico_usb_i2s_speaker
- * @version 0.6
+ * @version 0.7
  * @date 2025-04-06
  * 
  */
