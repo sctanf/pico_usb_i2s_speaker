@@ -28,6 +28,7 @@
 
 #include "pico/stdlib.h"
 #include "hardware/clocks.h"
+#include "hardware/dma.h"
 
 #include "bsp/board_api.h"
 #include "tusb.h"
@@ -100,12 +101,13 @@ void audio_task(void);
 /*------------- MAIN -------------*/
 int main(void)
 {
+  //uartの設定よりも前に呼び出す
+  i2s_mclk_set_config(pio0, 0, dma_claim_unused_channel(true), false, true, false, false);
   board_init();
 
   //i2s init
+  i2s_mclk_set_pin(2, 3);
   i2s_mclk_init(current_sample_rate);
-  i2s_mclk_dma_init();
-  i2s_handler();
 
   // init device stack on configured roothub port
   tud_init(BOARD_TUD_RHPORT);
@@ -292,11 +294,11 @@ static bool tud_audio_feature_unit_set_request(uint8_t rhport, audio_control_req
     //Windowsはチャンネル0は使っていないっぽい
     if (request->bChannelNumber == 1)
     {
-      volume_change(volume[1], 1);
+      i2s_volume_change(volume[1], 1);
     }
     else if (request->bChannelNumber == 2)
     {
-      volume_change(volume[2], 2);
+      i2s_volume_change(volume[2], 2);
     }
 
     TU_LOG1("Set channel %d volume: %d dB\r\n", request->bChannelNumber, volume[request->bChannelNumber] / 256);
@@ -415,14 +417,14 @@ void audio_task(void)
 {
   if (spk_data_size)
   {
-    enqueue(spk_buf, spk_data_size, current_resolution);
+    i2s_enqueue(spk_buf, spk_data_size, current_resolution);
 
     //1ms間隔でフィードバック
     static uint32_t start_ms = 0;
     uint32_t curr_ms = board_millis();
     if (curr_ms > start_ms)
     {
-      int8_t length =  get_buf_length();
+      int8_t length =  i2s_get_buf_length();
       uint32_t feedback = (current_sample_rate / 1000) << 16;
 
       //Windowsの許容するフィードバック量

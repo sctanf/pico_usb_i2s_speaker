@@ -38,13 +38,10 @@ pico_sdk_init()
 add_executable(pico_usb_i2s_speaker
         main.c
         usb_descriptors.c
-        i2s.c)
+        )
 
 pico_set_program_name(pico_usb_i2s_speaker "pico_usb_i2s_speaker")
 pico_set_program_version(pico_usb_i2s_speaker "0.1")
-
-# Generate PIO header
-pico_generate_pio_header(pico_usb_i2s_speaker ${CMAKE_CURRENT_LIST_DIR}/i2s.pio)
 
 # Modify the below lines to enable/disable output over UART/USB
 pico_enable_stdio_uart(pico_usb_i2s_speaker 1)
@@ -60,13 +57,15 @@ target_include_directories(pico_usb_i2s_speaker PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}/.. # for our common lwipopts or any other standard includes, if required
 )
 
+add_subdirectory(${CMAKE_SOURCE_DIR}/lib/pico-i2s-pio)
+
 # Add any user requested libraries
 target_link_libraries(pico_usb_i2s_speaker
-        hardware_dma
-        hardware_pio
         hardware_clocks
+        hardware_dma
         tinyusb_device
         tinyusb_board
+        pico-i2s-pio
         )
 
 pico_add_extra_outputs(pico_usb_i2s_speaker)
