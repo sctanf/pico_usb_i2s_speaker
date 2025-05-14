@@ -112,11 +112,11 @@ void audio_task(void);
 int main(void)
 {
   //uartの設定よりも前に呼び出す
-  i2s_mclk_set_config(pio0, 0, dma_claim_unused_channel(true), false, true, false, false);
+  i2s_mclk_set_config(pio0, 0, dma_claim_unused_channel(true), false, CLOCK_MODE_LOW_JITTER, MODE_I2S);
   board_init();
 
   //i2s init
-  i2s_mclk_set_pin(2, 3);
+  i2s_mclk_set_pin(18, 20, 22);
   i2s_mclk_init(current_sample_rate);
 
   // init device stack on configured roothub port
