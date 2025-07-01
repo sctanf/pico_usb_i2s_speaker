@@ -4,7 +4,7 @@ Raspberry Pi Picoとtinyusbを使ったマスタークロック付きのi2sを�
 ## build
 ### vscodeの拡張機能を使う場合
 ```
-https://github.com/BambooMaster/usb_sound_card_hires.git
+git clone https://github.com/BambooMaster/pico_usb_i2s_speaker.git
 cd usb_sound_card_hires
 git submodule update --init
 ```
@@ -12,7 +12,7 @@ git submodule update --init
 
 ### vscodeの拡張機能を使わない場合
 ```
-https://github.com/BambooMaster/usb_sound_card_hires.git
+git clone https://github.com/BambooMaster/pico_usb_i2s_speaker.git
 cd usb_sound_card_hires
 git submodule update --init
 mkdir build && cd build
