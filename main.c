@@ -45,15 +45,16 @@
 #include "usb_descriptors.h"
 
 #include "i2s.h"
+#include "dsp/eq.h"
 
 //--------------------------------------------------------------------+
 // MACRO CONSTANT TYPEDEF PROTOTYPES
 //--------------------------------------------------------------------+
 
 // List of supported sample rates
-const uint32_t sample_rates[] = {44100, 48000, 88200, 96000};
+const uint32_t sample_rates[] = {48000};
 
-uint32_t current_sample_rate  = 44100;
+uint32_t current_sample_rate  = 48000;
 
 #define N_SAMPLE_RATES  TU_ARRAY_SIZE(sample_rates)
 
@@ -113,11 +114,11 @@ void bootsel_task(void);
 int main(void)
 {
   //uartの設定よりも前に呼び出す
-  i2s_mclk_set_config(pio0, 0, dma_claim_unused_channel(true), false, CLOCK_MODE_LOW_JITTER, MODE_I2S);
+  i2s_mclk_set_config(pio0, 0, dma_claim_unused_channel(true), false, CLOCK_MODE_LOW_JITTER_OC, MODE_I2S);
   board_init();
 
   //i2s init
-  i2s_mclk_set_pin(18, 20, 22);
+  i2s_mclk_set_pin(18, 16, 22);
   i2s_mclk_init(current_sample_rate);
 
   // init device stack on configured roothub port
@@ -429,7 +430,7 @@ void audio_task(void)
 {
   if (spk_data_size)
   {
-    i2s_enqueue(spk_buf, spk_data_size, current_resolution);
+    eq_process(spk_buf, spk_data_size, current_resolution);
 
     //1ms間隔でフィードバック
     static uint32_t start_ms = 0;
