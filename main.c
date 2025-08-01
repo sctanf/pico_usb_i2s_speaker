@@ -58,6 +58,8 @@ uint32_t current_sample_rate  = 48000;
 
 #define N_SAMPLE_RATES  TU_ARRAY_SIZE(sample_rates)
 
+#define DEFAULT_VOLUME  -6 * 256 // -6 dB ~ 67%
+
 /* Blink pattern
  * - 25 ms   : streaming data
  * - 250 ms  : device not mounted
@@ -129,6 +131,15 @@ int main(void)
   }
 
   TU_LOG1("Headset running\r\n");
+
+  // set default mute and volume
+  for (int i = 0; i < CFG_TUD_AUDIO_FUNC_1_N_CHANNELS_RX + 1; i++)
+  {
+    mute[i] = false;
+    volume[i] = DEFAULT_VOLUME;
+    audio_set_mute(mute[i], i);
+    audio_set_volume(volume[i], i);
+  }
 
   while (1)
   {
