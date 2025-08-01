@@ -44,7 +44,7 @@ pico_set_program_name(pico_usb_i2s_speaker "pico_usb_i2s_speaker")
 pico_set_program_version(pico_usb_i2s_speaker "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB
-pico_enable_stdio_uart(pico_usb_i2s_speaker 1)
+pico_enable_stdio_uart(pico_usb_i2s_speaker 0)
 pico_enable_stdio_usb(pico_usb_i2s_speaker 0)
 
 # Add the standard library to the build
