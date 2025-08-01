@@ -12,6 +12,9 @@ supports 2ch 16/24/32bit 48khz, although internally there is only up to 28 bits 
 
 created for a project to power Valve Index speakers with a Pico/RP2040 and I2S amplifers (MAX98357/MAX98360), see https://github.com/sctanf/Bigscreen-Beyond-Valve-Index-Strap-Adapter/ and https://github.com/sctanf/picoamp-PCB
 
+## compiling
+please use https://github.com/sctanf/tinyusb or tinyusb 0.17.0
+
 ## hardware
 I linked above for the companion boards that will work with picoamp firmware, but you can also build it out of module parts.
 
