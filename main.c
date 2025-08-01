@@ -107,6 +107,7 @@ uint8_t current_resolution;
 
 void led_blinking_task(void);
 void audio_task(void);
+void bootsel_task(void);
 
 /*------------- MAIN -------------*/
 int main(void)
@@ -133,6 +134,7 @@ int main(void)
     tud_task(); // TinyUSB device task
     audio_task();
     led_blinking_task();
+    bootsel_task();
   }
 }
 
@@ -467,4 +469,36 @@ void led_blinking_task(void)
 
   board_led_write(led_state);
   led_state = 1 - led_state;
+}
+
+//--------------------------------------------------------------------+
+// BOOTSEL TASK
+//--------------------------------------------------------------------+
+
+// https://github.com/jasongaunt/rp2040-bootsel-reboot-example/
+#include "hardware/watchdog.h"
+
+bool timer_interrupt(__unused struct repeating_timer *t)
+{
+    return true;
+}
+
+bool watchdog_enabled = false;
+struct repeating_timer timer;
+
+void bootsel_task(void)
+{
+    if (!watchdog_enabled)
+    {
+        watchdog_enable(500, 1); // enable watchdog now
+        watchdog_enabled = true;
+    }
+    add_repeating_timer_ms(400, timer_interrupt, NULL, &timer);
+    __wfi(); // if there are no irq, watchdog will also time out (ex. usb stopped receiving data or something?)
+    watchdog_update();
+    cancel_repeating_timer(&timer); // reset timer if something already interrupted in time
+    // TODO: this is causing issues if the device is connected but no audio streaming to it, which is nice in some instances but very bad in others
+    // maybe find another way
+    if (board_button_read())
+        while(1); // time out the watchdog
 }
