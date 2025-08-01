@@ -72,7 +72,7 @@ target_link_libraries(pico_usb_i2s_speaker
 pico_define_boot_stage2(slower_boot2 ${PICO_DEFAULT_BOOT_STAGE2_FILE})
 target_compile_definitions(pico_usb_i2s_speaker PRIVATE
         # Startup delay to avoid issue with QSPI flash
-        #PICO_XOSC_STARTUP_DELAY_MULTIPLIER=64
+        PICO_XOSC_STARTUP_DELAY_MULTIPLIER=64
 
         # Performance, avoid calls to ____wrap___aeabi_lmul_veneer when doing 64bit multiplies
         PICO_INT64_OPS_IN_RAM=1
