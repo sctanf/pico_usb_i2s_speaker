@@ -293,6 +293,15 @@ static bool tud_audio_feature_unit_set_request(uint8_t rhport, audio_control_req
 
     mute[request->bChannelNumber] = ((audio_control_cur_1_t const *)buf)->bCur;
 
+    if (request->bChannelNumber == 1)
+    {
+      audio_set_mute(mute[1], 1);
+    }
+    else if (request->bChannelNumber == 2)
+    {
+      audio_set_mute(mute[2], 2);
+    }
+  
     TU_LOG1("Set channel %d Mute: %d\r\n", request->bChannelNumber, mute[request->bChannelNumber]);
 
     return true;
@@ -307,11 +316,11 @@ static bool tud_audio_feature_unit_set_request(uint8_t rhport, audio_control_req
     //Windowsはチャンネル0は使っていないっぽい
     if (request->bChannelNumber == 1)
     {
-      i2s_volume_change(volume[1], 1);
+      audio_set_volume(volume[1], 1);
     }
     else if (request->bChannelNumber == 2)
     {
-      i2s_volume_change(volume[2], 2);
+      audio_set_volume(volume[2], 2);
     }
 
     TU_LOG1("Set channel %d volume: %d dB\r\n", request->bChannelNumber, volume[request->bChannelNumber] / 256);

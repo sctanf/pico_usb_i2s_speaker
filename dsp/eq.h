@@ -6,6 +6,7 @@
 #include "pico/stdlib.h"
 
 #include "dsp.h"
+#include "vol.h"
 #include "i2s.h"
 
 // dsp audio buffers
@@ -55,7 +56,8 @@ biquad(eq_bq_18)
 #endif
 #endif
 
-int32_t actual_vol = 0;
+int32_t current_vol_l = 0;
+int32_t current_vol_r = 0;
 #define VOL_STEP 300000
 
 dspfx limit[192]; // sample store
@@ -86,8 +88,6 @@ static void __not_in_flash_func(eq_process)(uint8_t* buffer, int sample, uint8_t
     uint64_t now_time = time_us_64();
 
     int16_t count;
-//    int32_t vol_mul = audio_state.mute ? 0 : audio_state.vol_mul;
-    int32_t vol_mul = 0x40000000; // TODO: max volume
 
 #ifdef PASSTHRU_ENABLE
 #define HEADROOM 0
@@ -171,15 +171,21 @@ static void __not_in_flash_func(eq_process)(uint8_t* buffer, int sample, uint8_t
     // volume
     dspfx volume_mul[96] = {0};
     for (int i = 0; i < count; i++) {
-        if (actual_vol - VOL_STEP > vol_mul)
-            actual_vol -= VOL_STEP;
-        else if (actual_vol < vol_mul - VOL_STEP)
-            actual_vol += VOL_STEP;
+        if (current_vol_l - VOL_STEP > (mute_l ? 0 : vol_mul_l))
+            current_vol_l -= VOL_STEP;
+        else if (current_vol_l < (mute_l ? 0 : vol_mul_l) - VOL_STEP)
+            current_vol_l += VOL_STEP;
         else
-            actual_vol = vol_mul;
-        volume_mul[i] = actual_vol;
-        buf0[i*2] = mulfx2(LAST_EQ_BUF[i*2], actual_vol);
-        buf0[i*2+1] = mulfx2(LAST_EQ_BUF[i*2+1], actual_vol);
+            current_vol_l = (mute_l ? 0 : vol_mul_l);
+        if (current_vol_r - VOL_STEP > (mute_r ? 0 : vol_mul_r))
+            current_vol_r -= VOL_STEP;
+        else if (current_vol_l < (mute_r ? 0 : vol_mul_r) - VOL_STEP)
+            current_vol_r += VOL_STEP;
+        else
+            current_vol_r = (mute_r ? 0 : vol_mul_r);
+        volume_mul[i] = current_vol_l > current_vol_r ? current_vol_l : current_vol_r;
+        buf0[i*2] = mulfx2(LAST_EQ_BUF[i*2], current_vol_l);
+        buf0[i*2+1] = mulfx2(LAST_EQ_BUF[i*2+1], current_vol_r);
     }
 
     // amp
@@ -261,7 +267,9 @@ static void __not_in_flash_func(eq_process)(uint8_t* buffer, int sample, uint8_t
     for (int i = 0; i < count * 2; i++)
         out_buf[i] = buf0[i] << HEADROOM;
 
-    i2s_enqueue((uint8_t *)out_buf, count * 8, 32);
+    // output to i2s
+    if (current_vol_l != 0 || current_vol_r != 0)
+        i2s_enqueue((uint8_t *)out_buf, count * 8, 32);
 }
 
 #endif
