@@ -42,6 +42,15 @@ biquad(eq_bq_18)
 #define EQ_ENABLE
 #define BASS_ENABLE
 
+/*
+ * -2: index source (v3.2)
+ * -1: index source (v3.1), -1dB/oct
+ *  0: index v5.31 psy
+ *  1: index v1.3
+ *  2: s05 v4
+ *  3: ksc75 v1
+ *  4: s05 v5
+ */
 #define USE_EQ 0
 
 #include "eq_configs.h"
