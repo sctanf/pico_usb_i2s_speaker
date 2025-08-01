@@ -116,7 +116,7 @@ void bootsel_task(void);
 int main(void)
 {
   //uartの設定よりも前に呼び出す
-  i2s_mclk_set_config(pio0, 0, dma_claim_unused_channel(true), false, CLOCK_MODE_LOW_JITTER, MODE_I2S);
+  i2s_mclk_set_config(pio0, 0, dma_claim_unused_channel(true), false, CLOCK_MODE_LOW_JITTER_OC, MODE_I2S);
   board_init();
 
   //i2s init
